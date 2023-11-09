@@ -1,0 +1,113 @@
+version: "3.9"
+services:
+  discovery:
+    build: ./discovery-server
+    ports:
+      - "8761:8761"
+    image: "discovery-service"
+    networks:
+      - app-network
+  membre:
+    build: ./MembreProjet
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://discovery:8761/eureka/
+    ports:
+      - "8087:8087"
+    depends_on:
+      - discovery
+    networks:
+      - app-network
+    image: "membre-service"
+  coach:
+    build: ./CoachProjet
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://discovery:8761/eureka/
+      - eureka.client.server-url.default-zone=http://discovery:8761
+      - eureka.client.service-url.defaultZone=http://discovery:8761/eureka
+      - eureka.instance.preferIpAddress=true
+      - eureka.instance.leaseRenewalIntervalInSeconds=10
+      - eureka.instance.leaseExpirationDurationInSeconds=30
+    ports:
+      - "8086:8086"
+    depends_on:
+      - mysql
+      - discovery
+    networks:
+      - app-network
+    image: "coach-service"
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-container
+    restart: always
+    environment:
+      MYSQL_DATABASE: SalleDeSport
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3309:3306"
+    networks:
+      - app-network
+  mongodb:
+    image: mongo:latest
+    env_file:
+      - ./AbonnementProjet/.env
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_data_container:/data/db
+
+  api:
+      build: ./AbonnementProjet
+      volumes:
+        - /app/node_modules
+      ports:
+        - 5000:5000
+      command: npm run start:dev
+      env_file:
+        - ./AbonnementProjet/.env
+      environment:
+        - EUREKA_HOST=discovery
+        - EUREKA_PORT=8761
+      depends_on:
+        - mongodb
+        - discovery
+      networks:
+        - app-network
+      image: "abonnement-service"
+  evenement:
+    build: ./EvenementProjet
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://discovery:8761/eureka/
+    ports:
+      - "8099:8099"
+    depends_on:
+      - discovery
+    networks:
+      - app-network
+    image: "evenement-service"
+  reservation:
+    build: ./ReservationProjet
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://discovery:8761/eureka/
+    ports:
+      - "8030:8030"
+    depends_on:
+      - discovery
+    networks:
+      - app-network
+    image: "reservation-service"
+  equipement:
+    build: ./EquipementsProjet
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://discovery:8761/eureka/
+    ports:
+      - "8020:8020"
+    depends_on:
+      - discovery
+    networks:
+      - app-network
+    image: "equipement-service"
+volumes:
+  mongodb_data_container:
+networks:
+  app-network:
+    driver: bridge

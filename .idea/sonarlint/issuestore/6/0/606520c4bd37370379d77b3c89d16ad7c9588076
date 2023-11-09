@@ -1,0 +1,17 @@
+
+o	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(¼Ş€
+p	java:S116"VRename this field "PhoneNumber" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¶åÉşÿÿÿÿ
+C
+java:S1068"-Remove this unused "firstName" private field.(š„¦¿
+G
+java:S1068",Remove this unused "lastName" private field.(ºàÑïúÿÿÿÿ
+D
+java:S1068")Remove this unused "email" private field.(ª«Õìùÿÿÿÿ
+J
+java:S1068"/Remove this unused "PhoneNumber" private field.(¶åÉşÿÿÿÿ
+F
+java:S1068"+Remove this unused "address" private field.(÷§ùÿÿÿÿ
+I
+java:S1068".Remove this unused "specialite" private field.(Ó“µğúÿÿÿÿ
+F
+java:S1068"+Remove this unused "salaire" private field.(Ë´ŸÑÿÿÿÿÿ
